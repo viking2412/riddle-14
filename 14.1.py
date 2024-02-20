@@ -16,26 +16,13 @@ def rotate(matrix):
     return new_matrix
 
 
-def sort(line):
-    count = 0
-    new_line = []
-    load = 0
-    for ch in line:
-        match ch:
-            case "O":
-                if count == 0:
-                    new_line.append("O")
-                    load += len(line) - (len(new_line)-1)
-                else:
-                    new_line.insert(-count, "O")
-                    load += len(line) - (len(new_line)-1-count)
-            case ".":
-                count += 1
-                new_line.append(".")
-            case "#":
-                new_line.append("#")
-                count = 0
-    return load
+def counter(matrix):
+    result = 0
+    for i, line in enumerate(matrix):
+        for ch in line:
+            if ch == "O":
+                result += i+1
+    return result
 
 
 def sort_2(matrix):
@@ -61,26 +48,27 @@ def sort_2(matrix):
 
 
 def solve():
-    #for _ in range(1000000000):
-
+    check = {}
     lines = fileread()
     lines = sort_2(transpose(lines))
     lines = sort_2(transpose(lines))
     lines = sort_2(rotate(lines))
     lines = sort_2(rotate(lines))
-    for _ in range(1000000000):
+    check[tuple([tuple(line) for line in lines])] = 0
+    for i in range(1, 1000000000):
         lines = sort_2(rotate(lines))
         lines = sort_2(rotate(lines))
         lines = sort_2(rotate(lines))
         lines = sort_2(rotate(lines))
-    sort(lines)
-    print("done!")
-
+        t_line = tuple([tuple(line) for line in lines])
+        if t_line in check:
+            result = (1000000000 - check[t_line]) % (i-check[t_line]) + check[t_line] - 1
+            break
+        check[t_line] = i
+    for key, value in check.items():
+        if value == result:
+            print(counter(key))
 
 
 if __name__ == '__main__':
     solve()
-
-# 13  12  31  43  12
-# 24  34  42  21  34
-# n   w   s   e
